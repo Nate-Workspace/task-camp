@@ -1,15 +1,19 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import axios from "axios"
 import Link from "next/link"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { signIn, useSession } from "next-auth/react";
+import { toast } from "react-hot-toast"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation"
 
 const registerSchema = z
   .object({
@@ -30,6 +34,18 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
 
+  // Redirect 
+  const session= useSession();
+    const router= useRouter()
+  
+    useEffect(()=>{
+      if (session?.status === "authenticated") {
+        toast.success("Logged in successfully");
+        router.push('/')
+      }
+    },[session?.status, router])
+    //-----------------------------------------------------
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -44,15 +60,41 @@ export function RegisterForm() {
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Register data:", data)
-      // Handle registration logic here
+      console.log(data)
+      axios.post('/api/register', data)
+      .then(()=> signIn('credentials', data))
+      .catch(()=> toast.error('Something went wrong!'))
+      .finally(()=> setIsLoading(false))
     } catch (error) {
       console.error("Registration error:", error)
+      toast.error("Something went wrong!")
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const socialLogin= ()=>{
+    setIsLoading(true)
+
+    try {
+      signIn("google", {redirect:false})
+    .then((callback)=>{
+      if(callback?.error){
+        toast.error("Invalid Credentials")
+      }
+      if(callback?.ok && !callback?.error){
+        toast.success("Registered successfully")
+      }
+    })
+    .finally(()=> setIsLoading(false))
+    } catch (error) {
+      toast.error("Something went wrong!")
+      console.log("Social login error", error)
+    }
+    finally{
+      setIsLoading(false)
+    }
+    
   }
 
   return (
@@ -153,7 +195,7 @@ export function RegisterForm() {
           </div>
         </div>
         <div className="w-full">
-          <Button variant="outline" type="button" disabled={isLoading} className="w-full">
+          <Button variant="outline" type="button" disabled={isLoading} className="w-full" onClick={socialLogin}>
             Google
           </Button>
         </div>
