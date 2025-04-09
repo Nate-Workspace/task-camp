@@ -32,7 +32,9 @@ export default function RootLayout({
       >
         <AuthContext>
         <ToasterContext/>
+        <main className="p-5">
         {children}
+        </main>
         </AuthContext>
       </body>
     </html>
