@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Tasks {
+model Task {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
