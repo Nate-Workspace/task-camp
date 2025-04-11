@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Card,
@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import React from "react";
+import React, { useState } from "react";
 import {
   AiOutlineCheckCircle,
   AiOutlineClockCircle,
@@ -17,6 +17,8 @@ import {
 import TaskStatusBadge from "@/app/components/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface TaskCardProps {
   task: {
@@ -45,11 +47,26 @@ const getStatusIcon = (status: "OPEN" | "IN_PROGRESS" | "CLOSED") => {
 const TaskCard = ({ task }: TaskCardProps) => {
   const statusIcon = getStatusIcon(task.status);
   const formattedDate = new Date(task.createdAt).toLocaleDateString();
+  const router = useRouter();
 
-  const router= useRouter();
+  const [isLoading, setIsLoading]= useState(false)
 
-  const onEdit= (id: string)=>{
-    router.push(`/tasks/edit/${id}`)
+  const onEdit = (id: string) => {
+    router.push(`/tasks/edit/${id}`);
+  };
+
+  const onDelete= async (id:string)=>{
+    try {
+        setIsLoading(true)
+        await axios.delete(`/api/tasks/${id}`)
+        router.refresh()
+    } catch (error) {
+        console.error(error)
+        toast.error("Error while deleting the task")
+        setIsLoading(false)
+    }finally{
+        setIsLoading(false)
+    }
   }
 
   return (
@@ -68,12 +85,17 @@ const TaskCard = ({ task }: TaskCardProps) => {
       </CardContent>
       <CardFooter>
         <div className="flex justify-between items-center w-full">
-        <div className="flex items-center space-x-2">
-        <p>Status: </p>
-        <TaskStatusBadge status={task.status} />
-        </div>
+          <div className="flex items-center space-x-2">
+            <p>Status: </p>
+            <TaskStatusBadge status={task.status} />
+          </div>
 
-        <Button size='sm' onClick={()=> onEdit(task.id)}>Edit</Button>
+          <div className="flex items-center space-x-2">
+            <Button size="sm" onClick={()=> onDelete(task.id)} variant="destructive" className="hover:cursor-pointer">Delete</Button>
+          <Button size="sm" onClick={() => onEdit(task.id)} className="hover:cursor-pointer">
+            Edit
+          </Button>
+          </div>
         </div>
       </CardFooter>
     </Card>
