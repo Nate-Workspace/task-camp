@@ -12,6 +12,11 @@ import dynamic from 'next/dynamic'
 import toast from 'react-hot-toast'
 
 
+const TaskForm = dynamic(() => import("@/app/tasks/_components/TaskForm"), {
+  ssr: false,
+});
+
+
 const SimpleMDE= dynamic(()=> import("react-simplemde-editor"), {ssr: false})
 
 type Status= "OPEN" | "IN_PROGRESS" | "CLOSED";
@@ -22,31 +27,33 @@ interface TaskForm{
 }
 
 const NewTasks = () => {
-    const {register, control, handleSubmit} = useForm<TaskForm>()
-    const router= useRouter()
-    const [error, setError]= useState('')
-    const onSubmit= async (data:TaskForm)=>{
-      try {
-        await axios.post("/api/tasks", {...data, status: "IN_PROGRESS"});
-        router.push("/tasks")
-      } catch (error) {
-        setError("Error creating a task")
-      }
+  <TaskForm/>
+    // const {register, control, handleSubmit} = useForm<TaskForm>()
+    // const router= useRouter()
+    // const [error, setError]= useState('')
+    // const onSubmit= async (data:TaskForm)=>{
+    //   try {
+    //     await axios.post("/api/tasks", {...data, status: "CLOSED"});
+    //     router.push("/tasks")
+    //   } catch (error) {
+    //     setError("Error creating a task")
+    //   }
 
-      if(error){
-        toast.error(error)
-      }
-    }
+    //   if(error){
+    //     toast.error(error)
+    //   }
+    // }
   return (
-    <form className='max-w-xl space-y-3' onSubmit={handleSubmit(onSubmit)}>
-        <Input placeholder='Title' {...register("title")}></Input>
-        <Controller 
-        name='description'
-        control={control}
-        render={({field})=> <SimpleMDE placeholder="Type your message here." {...field}/>}
-        />
-        <Button>Add New Task</Button>
-    </form>
+      <TaskForm/>
+    // <form className='max-w-xl space-y-3' onSubmit={handleSubmit(onSubmit)}>
+    //     <Input placeholder='Title' {...register("title")}></Input>
+    //     <Controller 
+    //     name='description'
+    //     control={control}
+    //     render={({field})=> <SimpleMDE placeholder="Type your message here." {...field}/>}
+    //     />
+    //     <Button>Add New Task</Button>
+    // </form>
   )
 }
 
