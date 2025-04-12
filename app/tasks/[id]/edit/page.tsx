@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import prisma from '@/prisma/client'
-import TaskEditClient from './TaskEditClient';
 import React from 'react'
+import TaskEditClient from './TaskEditClient';
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -16,6 +16,8 @@ const TaskEditId: React.FC<Props> = async ({ params }) => {
       });
     
       if (!task) notFound();
+
+      console.log("this is from edit page")
 
   return (
     <TaskEditClient task={task} />

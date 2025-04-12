@@ -3,6 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import ToasterContext from "./context/ToasterContext";
 import AuthContext from "./context/AuthContext";
 
+
+import { MainSidebar } from "@/app/(navigation)/Sidebar"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,10 +35,19 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthContext>
+        <SidebarProvider>
+          <MainSidebar />
+          <SidebarInset >
+            <header className="flex h-16 items-center border-b px-4">
+              <SidebarTrigger />
+              <h1 className="ml-4 text-lg font-semibold">Your task manager</h1>
+            </header>
         <ToasterContext/>
         <main className="p-5">
         {children}
         </main>
+        </SidebarInset>
+        </SidebarProvider>
         </AuthContext>
       </body>
     </html>

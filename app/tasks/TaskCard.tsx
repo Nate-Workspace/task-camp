@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ReactMarkdown from "react-markdown";
 
 interface TaskCardProps {
   task: {
@@ -52,7 +53,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
   const [isLoading, setIsLoading]= useState(false)
 
   const onEdit = (id: string) => {
-    router.push(`/tasks/edit/${id}`);
+    router.push(`/tasks/${id}/edit`);
   };
 
   const onDelete= async (id:string)=>{
@@ -81,7 +82,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
         </div>
       </CardHeader>
       <CardContent>
-        <p>{task.description}</p>
+        <ReactMarkdown>{task.description}</ReactMarkdown>
       </CardContent>
       <CardFooter>
         <div className="flex justify-between items-center w-full">

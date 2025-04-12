@@ -85,7 +85,7 @@ const TaskForm = ({ task }: { task?: Task }) => {
         <div className="flex items-center gap-2">
           <label>Status: </label>
           <Select
-            value={status || "OPEN"} // Manually manage the value for the Select
+            value={status || "OPEN"} 
             onValueChange={(value) => setValue("status", value as Status)} 
           >
             <SelectTrigger>
