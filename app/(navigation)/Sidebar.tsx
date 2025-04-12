@@ -6,8 +6,6 @@ import {
   type LucideIcon,
   CheckSquare,
 } from "lucide-react";
-import Link from "next/link";
-
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +16,18 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface NavItem {
   title: string;
@@ -78,16 +87,30 @@ export function MainSidebar() {
       <SidebarFooter className="py-4">
         <SidebarMenu>
           {status === "authenticated" ? (
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Logout">
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="flex items-center text-red-500 hover:text-red-600"
-                >
-                  <LogOut className="size-4 mr-2" />
-                  <span>Logout</span>
-                </button>
-              </SidebarMenuButton>
+            <SidebarMenuItem className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage
+                      src="/placeholder.jpeg"
+                      referrerPolicy="no-referrer"
+                    />
+                    <AvatarFallback>?</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                  >
+                    <LogOut />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="flex flex-col gap-0.5 leading-none overflow-x-hidden">
+                <span className="font-semibold">{session.user?.name}</span>
+                <span className="font-light text-sm">{session.user?.email}</span>
+              </div>
             </SidebarMenuItem>
           ) : (
             <>
@@ -120,4 +143,16 @@ export function MainSidebar() {
       <SidebarRail />
     </Sidebar>
   );
+}
+
+{
+  /* <SidebarMenuButton asChild tooltip="Logout">
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="flex items-center text-red-500 hover:text-red-600"
+                >
+                  <LogOut className="size-4 mr-2" />
+                  <span>Logout</span>
+                </button>
+              </SidebarMenuButton> */
 }
